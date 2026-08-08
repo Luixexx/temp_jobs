@@ -1,45 +1,225 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.build/
-.buildlog/
-.history
-.svn/
-.swiftpm/
-migrate_working_dir/
+# ============================================================
+# FLUTTER / DART
+# ============================================================
 
-# IntelliJ related
+.dart_tool/
+.packages
+.pub/
+.pub-cache/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Generated Dart files
+**/*.g.dart
+**/*.freezed.dart
+
+# Si utilizas generación de código y necesitas subir estos archivos,
+# comenta las dos líneas anteriores.
+
+
+# ============================================================
+# ANDROID / GRADLE
+# ============================================================
+
+# Gradle cache
+.gradle/
+**/.gradle/
+
+# Android local configuration
+android/local.properties
+local.properties
+
+# Gradle generated files / caches
+android/.gradle/
+android/**/.gradle/
+
+# Build folders
+android/build/
+android/app/build/
+**/build/
+
+# Generated plugin registrant
+android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+
+# Gradle cache / temporary files
+**/executionHistory/
+**/fileChanges/
+**/fileHashes/
+**/checksums/
+**/buildOutputCleanup/
+**/vcs-*/
+**/noVersion/
+
+**/executionHistory.bin
+**/executionHistory.lock
+**/last-build.bin
+**/fileHashes.bin
+**/fileHashes.lock
+**/resourceHashesCache.bin
+**/outputFiles.bin
+**/buildLogic.lock
+**/gc.properties
+**/cache.properties
+**/checksums.lock
+**/md5-checksums.bin
+**/sha1-checksums.bin
+
+
+# ============================================================
+# iOS / XCODE
+# ============================================================
+
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/ephemeral/
+ios/Flutter/.last_build_id
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+
+DerivedData/
+
+
+# ============================================================
+# macOS
+# ============================================================
+
+macos/Pods/
+macos/.symlinks/
+macos/Flutter/ephemeral/
+macos/Flutter/GeneratedPluginRegistrant.swift
+
+DerivedData/
+
+
+# ============================================================
+# WINDOWS
+# ============================================================
+
+windows/flutter/ephemeral/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+
+# ============================================================
+# LINUX
+# ============================================================
+
+linux/flutter/ephemeral/
+
+
+# ============================================================
+# WEB
+# ============================================================
+
+# Generated Flutter web files
+web/flutter_service_worker.js
+
+
+# ============================================================
+# IDE - ANDROID STUDIO / INTELLIJ
+# ============================================================
+
+.idea/
 *.iml
 *.ipr
 *.iws
-.idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
 
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
-/coverage/
+# ============================================================
+# VS CODE
+# ============================================================
 
-# Symbolication related
-app.*.symbols
+# Si quieres compartir configuraciones de VS Code,
+# elimina esta línea.
+.vscode/
 
-# Obfuscation related
-app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# ============================================================
+# OPERATING SYSTEM
+# ============================================================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+.directory
+
+
+# ============================================================
+# TEMPORARY / CACHE / LOG FILES
+# ============================================================
+
+*.tmp
+*.temp
+*.log
+*.cache
+*.lock
+*.bak
+*.swp
+*.swo
+
+.cache/
+tmp/
+temp/
+
+
+# ============================================================
+# ENVIRONMENT / SECRETS
+# ============================================================
+
+.env
+.env.*
+!.env.example
+
+*.jks
+*.keystore
+key.properties
+
+# Firebase / Google credentials (opcional según tu proyecto)
+# google-services.json
+# GoogleService-Info.plist
+
+
+# ============================================================
+# COVERAGE / TEST GENERATED
+# ============================================================
+
+coverage/
+test-results/
+
+
+# ============================================================
+# FLUTTER GENERATED
+# ============================================================
+
+**/flutter/ephemeral/
+**/GeneratedPluginRegistrant.*
+**/generated_plugin_registrant.dart
+
+
+# ============================================================
+# KEEP IMPORTANT PROJECT FILES
+# ============================================================
+
+!pubspec.yaml
+!pubspec.lock
+!analysis_options.yaml
