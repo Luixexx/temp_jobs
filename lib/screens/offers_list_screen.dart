@@ -94,6 +94,7 @@ class _OffersListScreenState extends State<OffersListScreen> {
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
+                    isExpanded: true,
                     decoration: const InputDecoration(
                       labelText: 'Tipo de trabajo',
                       isDense: true,
@@ -105,7 +106,7 @@ class _OffersListScreenState extends State<OffersListScreen> {
                       ..._jobTypes.map(
                         (jt) => DropdownMenuItem(
                           value: jt.key,
-                          child: Text(jt.name),
+                          child: Text(jt.name, overflow: TextOverflow.ellipsis),
                         ),
                       ),
                     ],
@@ -118,6 +119,7 @@ class _OffersListScreenState extends State<OffersListScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: DropdownButtonFormField<String>(
+                    isExpanded: true,
                     decoration: const InputDecoration(
                       labelText: 'Contrato',
                       isDense: true,
