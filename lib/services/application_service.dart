@@ -37,12 +37,12 @@ class ApplicationService {
     String? duration,
   }) async {
     final body = <String, dynamic>{
-      if (rating != null) 'rating': rating,
-      if (status != null) 'status': status,
-      if (salary != null) 'salary': salary,
-      if (currency != null) 'currency': currency,
-      if (startDate != null) 'startDate': startDate,
-      if (duration != null) 'duration': duration,
+      'rating': ?rating,
+      'status': ?status,
+      'salary': ?salary,
+      'currency': ?currency,
+      'startDate': ?startDate,
+      'duration': ?duration,
     };
     await _api.patch('/applications/$applicationId', body, auth: true);
   }

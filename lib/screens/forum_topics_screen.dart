@@ -92,6 +92,7 @@ class _ForumTopicsScreenState extends State<ForumTopicsScreen> {
 
     try {
       await _service.createTopic(title, description);
+      if (!mounted) return;
 
       // Actualización optimista: insertamos el tema ya mismo en la lista,
       // sin esperar a que el servidor confirme que ya lo puede devolver.
