@@ -3,6 +3,7 @@ import '../models/offer.dart';
 import '../services/offer_service.dart';
 import 'offer_detail_screen.dart';
 import 'publish_offer_screen.dart';
+import 'offers_map_screen.dart';
 
 class OffersListScreen extends StatefulWidget {
   const OffersListScreen({super.key});
@@ -31,7 +32,18 @@ class _OffersListScreenState extends State<OffersListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Ofertas de empleo')),
+      appBar: AppBar(
+        title: const Text('Ofertas de empleo'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.map_outlined),
+            tooltip: 'Ver mapa de ofertas',
+            onPressed: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const OffersMapScreen())),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.add),
         label: const Text('Publicar'),
