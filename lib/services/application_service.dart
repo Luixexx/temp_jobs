@@ -4,8 +4,15 @@ import 'api_client.dart';
 class ApplicationService {
   final ApiClient _api = ApiClient();
 
-  Future<void> apply(String offerId, String comment) async {
-    await _api.post('/offers/$offerId/apply', {'comment': comment}, auth: true);
+  Future<void> apply(
+    String offerId,
+    String comment, {
+    List<Map<String, dynamic>>? answers,
+  }) async {
+    await _api.post('/offers/$offerId/apply', {
+      'comment': comment,
+      if (answers != null && answers.isNotEmpty) 'answers': answers,
+    }, auth: true);
   }
 
   Future<List<Application>> getMyApplications() async {
