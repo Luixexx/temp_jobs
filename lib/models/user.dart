@@ -8,6 +8,10 @@ class User {
   final String role;
   final String? createdAt;
   final String? lastLoginAt;
+  final String? cedula;
+  final String? gender;
+  final String? birthDate;
+  final bool profileCompleted;
 
   User({
     required this.id,
@@ -17,6 +21,11 @@ class User {
     required this.nombre,
     required this.referralMatricula,
     required this.role,
+    required this.profileCompleted,
+    this.cedula,
+    this.gender,
+    this.birthDate,
+
     this.createdAt,
     this.lastLoginAt,
   });
@@ -32,6 +41,10 @@ class User {
       role: json['role'] ?? '',
       createdAt: json['createdAt'],
       lastLoginAt: json['lastLoginAt'],
+      cedula: json['cedula'],
+      gender: json['gender'],
+      birthDate: json['birthDate'],
+      profileCompleted: json['profileCompleted'] ?? false,
     );
   }
 }

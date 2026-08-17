@@ -5,6 +5,9 @@ import 'my_contracts_screen.dart';
 import 'my_likes_screen.dart';
 import 'publish_offer_screen.dart';
 import 'settings_screen.dart';
+import 'news_list_screen.dart';
+import 'videos_screen.dart';
+import 'my_payments_screen.dart';
 
 class MyHubScreen extends StatelessWidget {
   const MyHubScreen({super.key});
@@ -69,6 +72,35 @@ class MyHubScreen extends StatelessWidget {
             onTap: () => Navigator.of(
               context,
             ).push(MaterialPageRoute(builder: (_) => const MyLikesScreen())),
+          ),
+          const SizedBox(height: 12),
+          _HubCard(
+            icon: Icons.newspaper_outlined,
+            title: 'Noticias de empleo',
+            subtitle: 'Últimas novedades del sector laboral',
+            onTap: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const NewsListScreen())),
+          ),
+
+          const SizedBox(height: 12),
+          _HubCard(
+            icon: Icons.play_circle_outline,
+            title: 'Videos de empleo',
+            subtitle: 'Tutoriales y capacitación en video',
+            onTap: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const VideosScreen())),
+          ),
+
+          const SizedBox(height: 12),
+          _HubCard(
+            icon: Icons.receipt_long_outlined,
+            title: 'Mis pagos',
+            subtitle: 'Historial de pagos realizados',
+            onTap: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const MyPaymentsScreen())),
           ),
         ],
       ),

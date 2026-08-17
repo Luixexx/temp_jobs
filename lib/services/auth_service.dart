@@ -64,4 +64,24 @@ class AuthService {
   Future<void> changePassword(String newPassword) async {
     await _api.put('/me/password', {'password': newPassword}, auth: true);
   }
+
+  Future<User> completeProfile({
+    required String firstName,
+    required String lastName,
+    required String cedula,
+    required String gender,
+    required String birthDate,
+  }) async {
+    final response = await _api.put('/me/profile', {
+      'firstName': firstName,
+      'lastName': lastName,
+      'cedula': cedula,
+      'gender': gender,
+      'birthDate': birthDate,
+    }, auth: true);
+    final data = response is Map && response.containsKey('data')
+        ? response['data']
+        : response;
+    return User.fromJson(data);
+  }
 }

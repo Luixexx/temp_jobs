@@ -1,4 +1,5 @@
 import 'api_client.dart';
+import '../models/payment.dart';
 
 class PaymentResult {
   final String id;
@@ -32,5 +33,13 @@ class PaymentService {
       id: (data['id'] ?? data['paymentId'] ?? '').toString(),
       approved: true,
     );
+  }
+
+  Future<List<Payment>> getMyPayments() async {
+    final response = await _api.get('/me/payments', auth: true);
+    final list = response is Map && response.containsKey('data')
+        ? response['data']
+        : response;
+    return (list as List).map((e) => Payment.fromJson(e)).toList();
   }
 }

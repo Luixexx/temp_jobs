@@ -1,44 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:temp_jobs/widget/Components/AnimatedButton.dart';
-import 'package:temp_jobs/widget/Components/AnimatedTextField.dart';
+import 'package:temp_jobs/widget/Components/animated_button.dart';
+import 'package:temp_jobs/widget/Components/animated_text_field.dart';
 
 import '../providers/auth_provider.dart';
 
-
-
 import 'main_nav_screen.dart';
 import 'login_screen.dart';
+import 'complete_profile_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({
-    super.key,
-  });
+  const RegisterScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() =>
-      _RegisterScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState
-    extends State<RegisterScreen> {
-  final _formKey =
-      GlobalKey<FormState>();
+class _RegisterScreenState extends State<RegisterScreen> {
+  final _formKey = GlobalKey<FormState>();
 
-  final _emailCtrl =
-      TextEditingController();
+  final _emailCtrl = TextEditingController();
 
-  final _firstNameCtrl =
-      TextEditingController();
+  final _firstNameCtrl = TextEditingController();
 
-  final _lastNameCtrl =
-      TextEditingController();
+  final _lastNameCtrl = TextEditingController();
 
-  final _passwordCtrl =
-      TextEditingController();
+  final _passwordCtrl = TextEditingController();
 
-  final _matriculaCtrl =
-      TextEditingController();
+  final _matriculaCtrl = TextEditingController();
 
   String? _errorMsg;
 
@@ -60,8 +49,7 @@ class _RegisterScreenState
   Future<void> _submit() async {
     FocusScope.of(context).unfocus();
 
-    if (!(_formKey.currentState?.validate() ??
-        false)) {
+    if (!(_formKey.currentState?.validate() ?? false)) {
       return;
     }
 
@@ -69,36 +57,29 @@ class _RegisterScreenState
       _errorMsg = null;
     });
 
-    final auth =
-        context.read<AuthProvider>();
+    final auth = context.read<AuthProvider>();
 
     try {
       await auth.register(
-        email:
-            _emailCtrl.text.trim(),
+        email: _emailCtrl.text.trim(),
 
-        firstName:
-            _firstNameCtrl.text.trim(),
+        firstName: _firstNameCtrl.text.trim(),
 
-        lastName:
-            _lastNameCtrl.text.trim(),
+        lastName: _lastNameCtrl.text.trim(),
 
-        password:
-            _passwordCtrl.text,
+        password: _passwordCtrl.text,
 
-        referralMatricula:
-            _matriculaCtrl.text.trim(),
+        referralMatricula: _matriculaCtrl.text.trim(),
       );
+      if (!mounted) return;
 
-      if (!mounted) {
-        return;
-      }
+      final user = context.read<AuthProvider>().user;
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder:
-              (_) =>
-                  const MainNavScreen(),
+          builder: (_) => (user != null && !user.profileCompleted)
+              ? const CompleteProfileScreen()
+              : const MainNavScreen(),
         ),
       );
     } catch (e) {
@@ -107,11 +88,7 @@ class _RegisterScreenState
       }
 
       setState(() {
-        _errorMsg =
-            e.toString().replaceFirst(
-                  'Exception: ',
-                  '',
-                );
+        _errorMsg = e.toString().replaceFirst('Exception: ', '');
       });
     }
   }
@@ -121,13 +98,9 @@ class _RegisterScreenState
   // ===========================================================================
 
   void _goToLogin() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder:
-            (_) =>
-                const LoginScreen(),
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const LoginScreen()));
   }
 
   // ===========================================================================
@@ -135,157 +108,86 @@ class _RegisterScreenState
   // ===========================================================================
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-    final isLoading =
-        context.watch<AuthProvider>().isLoading;
+  Widget build(BuildContext context) {
+    final isLoading = context.watch<AuthProvider>().isLoading;
 
-    final isDark =
-        Theme.of(context).brightness ==
-        Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final primary =
-        isDark
-            ? const Color(
-                0xFF4DB6AC,
-              )
-            : const Color(
-                0xFF2E6F65,
-              );
+    final primary = isDark ? const Color(0xFF4DB6AC) : const Color(0xFF2E6F65);
 
-    final titleColor =
-        isDark
-            ? const Color(
-                0xFFF2F7F5,
-              )
-            : const Color(
-                0xFF17352F,
-              );
+    final titleColor = isDark
+        ? const Color(0xFFF2F7F5)
+        : const Color(0xFF17352F);
 
-    final secondaryText =
-        isDark
-            ? const Color(
-                0xFFA6BAB5,
-              )
-            : const Color(
-                0xFF526D67,
-              );
+    final secondaryText = isDark
+        ? const Color(0xFFA6BAB5)
+        : const Color(0xFF526D67);
 
     return Scaffold(
-      backgroundColor:
-          Colors.transparent,
+      backgroundColor: Colors.transparent,
 
-      resizeToAvoidBottomInset:
-          true,
+      resizeToAvoidBottomInset: true,
 
       body: SafeArea(
-        child:
-            SingleChildScrollView(
-          keyboardDismissBehavior:
-              ScrollViewKeyboardDismissBehavior
-                  .onDrag,
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
 
-          padding:
-              const EdgeInsets.fromLTRB(
-            20,
-            16,
-            20,
-            32,
-          ),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
 
-          child:
-              Form(
-            key:
-                _formKey,
+          child: Form(
+            key: _formKey,
 
-            child:
-                Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.stretch,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
 
               children: [
-              
                 // =============================================================
                 // HEADER
                 // =============================================================
 
-                Center(
-                  child:
-                      _RegisterIcon(
-                    isDark:
-                        isDark,
-                  ),
-                ),
+                Center(child: _RegisterIcon(isDark: isDark)),
 
-                const SizedBox(
-                  height: 48,
-                ),
+                const SizedBox(height: 48),
 
                 Text(
                   'Crea tu cuenta',
 
-                  textAlign:
-                      TextAlign.center,
+                  textAlign: TextAlign.center,
 
-                  style:
-                      TextStyle(
-                    color:
-                        titleColor,
+                  style: TextStyle(
+                    color: titleColor,
 
-                    fontSize:
-                        29,
+                    fontSize: 29,
 
-                    height:
-                        1.15,
+                    height: 1.15,
 
-                    fontWeight:
-                        FontWeight.w800,
+                    fontWeight: FontWeight.w800,
 
-                    letterSpacing:
-                        -.7,
+                    letterSpacing: -.7,
                   ),
                 ),
 
-                const SizedBox(
-                  height: 9,
-                ),
+                const SizedBox(height: 9),
 
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(
-                    horizontal: 18,
-                  ),
-                ),
+                Padding(padding: const EdgeInsets.symmetric(horizontal: 18)),
 
-                const SizedBox(
-                  height: 0,
-                ),
+                const SizedBox(height: 0),
 
-                const SizedBox(
-                  height: 15,
-                ),
+                const SizedBox(height: 15),
 
                 AnimatedTextField(
-                  controller:
-                      _firstNameCtrl,
+                  controller: _firstNameCtrl,
 
-                  labelText:
-                      'Nombre',
+                  labelText: 'Nombre',
 
-                  hintText:
-                      'Escribe tu nombre',
+                  hintText: 'Escribe tu nombre',
 
-                  prefixIcon:
-                      Icons.person_outline_rounded,
+                  prefixIcon: Icons.person_outline_rounded,
 
-                  textInputAction:
-                      TextInputAction.next,
+                  textInputAction: TextInputAction.next,
 
-                  validator:
-                      (value) {
-                    if (value == null ||
-                        value.trim().isEmpty) {
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
                       return 'Ingresa tu nombre';
                     }
 
@@ -293,30 +195,21 @@ class _RegisterScreenState
                   },
                 ),
 
-                const SizedBox(
-                  height: 13,
-                ),
+                const SizedBox(height: 13),
 
                 AnimatedTextField(
-                  controller:
-                      _lastNameCtrl,
+                  controller: _lastNameCtrl,
 
-                  labelText:
-                      'Apellido',
+                  labelText: 'Apellido',
 
-                  hintText:
-                      'Escribe tu apellido',
+                  hintText: 'Escribe tu apellido',
 
-                  prefixIcon:
-                      Icons.badge_outlined,
+                  prefixIcon: Icons.badge_outlined,
 
-                  textInputAction:
-                      TextInputAction.next,
+                  textInputAction: TextInputAction.next,
 
-                  validator:
-                      (value) {
-                    if (value == null ||
-                        value.trim().isEmpty) {
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
                       return 'Ingresa tu apellido';
                     }
 
@@ -324,60 +217,41 @@ class _RegisterScreenState
                   },
                 ),
 
-                const SizedBox(
-                  height: 13,
-                ),
+                const SizedBox(height: 13),
 
                 AnimatedTextField(
-                  controller:
-                      _emailCtrl,
+                  controller: _emailCtrl,
 
-                  labelText:
-                      'Correo electrónico',
+                  labelText: 'Correo electrónico',
 
-                  hintText:
-                      'ejemplo@correo.com',
+                  hintText: 'ejemplo@correo.com',
 
-                  prefixIcon:
-                      Icons.alternate_email_rounded,
+                  prefixIcon: Icons.alternate_email_rounded,
 
-                  keyboardType:
-                      TextInputType.emailAddress,
+                  keyboardType: TextInputType.emailAddress,
 
-                  textInputAction:
-                      TextInputAction.next,
+                  textInputAction: TextInputAction.next,
 
-                  validator:
-                      _validateEmail,
+                  validator: _validateEmail,
                 ),
 
-                const SizedBox(
-                  height: 13,
-                ),
+                const SizedBox(height: 13),
 
                 AnimatedTextField(
-                  controller:
-                      _passwordCtrl,
+                  controller: _passwordCtrl,
 
-                  labelText:
-                      'Contraseña',
+                  labelText: 'Contraseña',
 
-                  hintText:
-                      '*******',
+                  hintText: '*******',
 
-                  prefixIcon:
-                      Icons.lock_outline_rounded,
+                  prefixIcon: Icons.lock_outline_rounded,
 
-                  obscureText:
-                      true,
+                  obscureText: true,
 
-                  textInputAction:
-                      TextInputAction.next,
+                  textInputAction: TextInputAction.next,
 
-                  validator:
-                      (value) {
-                    if (value == null ||
-                        value.isEmpty) {
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
                       return 'Ingresa una contraseña';
                     }
 
@@ -389,37 +263,27 @@ class _RegisterScreenState
                   },
                 ),
 
-                const SizedBox(
-                  height: 13,
-                ),
+                const SizedBox(height: 13),
 
                 AnimatedTextField(
-                  controller:
-                      _matriculaCtrl,
+                  controller: _matriculaCtrl,
 
-                  labelText:
-                      'Matrícula de referido',
+                  labelText: 'Matrícula de referido',
 
-                  hintText:
-                      'Ej. 20240001',
+                  hintText: 'Ej. 20240001',
 
-                  prefixIcon:
-                      Icons.confirmation_number_outlined,
+                  prefixIcon: Icons.confirmation_number_outlined,
 
-                  textInputAction:
-                      TextInputAction.done,
+                  textInputAction: TextInputAction.done,
 
-                  onSubmitted:
-                      (_) {
+                  onSubmitted: (_) {
                     if (!isLoading) {
                       _submit();
                     }
                   },
 
-                  validator:
-                      (value) {
-                    if (value == null ||
-                        value.trim().isEmpty) {
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
                       return 'Ingresa la matrícula del referido';
                     }
 
@@ -427,81 +291,51 @@ class _RegisterScreenState
                   },
                 ),
 
-                const SizedBox(
-                  height: 22,
-                ),
+                const SizedBox(height: 22),
 
                 // =============================================================
                 // ERROR
                 // =============================================================
-
                 AnimatedSwitcher(
-                  duration:
-                      const Duration(
-                    milliseconds: 250,
-                  ),
+                  duration: const Duration(milliseconds: 250),
 
-                  child:
-                      _errorMsg == null
-                          ? const SizedBox.shrink()
-                          : _ErrorMessage(
-                              key:
-                                  ValueKey(
-                                _errorMsg,
-                              ),
+                  child: _errorMsg == null
+                      ? const SizedBox.shrink()
+                      : _ErrorMessage(
+                          key: ValueKey(_errorMsg),
 
-                              message:
-                                  _errorMsg!,
-                            ),
+                          message: _errorMsg!,
+                        ),
                 ),
 
-                if (_errorMsg != null)
-                  const SizedBox(
-                    height: 16,
-                  ),
+                if (_errorMsg != null) const SizedBox(height: 16),
 
                 // =============================================================
                 // CTA PRINCIPAL
                 // =============================================================
-
                 AnimatedButton(
-                  text:
-                      'Crear mi cuenta',
+                  text: 'Crear mi cuenta',
 
-                  icon:
-                      Icons.person_add_alt_1_rounded,
+                  icon: Icons.person_add_alt_1_rounded,
 
-                  isLoading:
-                      isLoading,
+                  isLoading: isLoading,
 
-                  onPressed:
-                      isLoading
-                          ? null
-                          : _submit,
+                  onPressed: isLoading ? null : _submit,
                 ),
 
-                const SizedBox(
-                  height: 18,
-                ),
+                const SizedBox(height: 18),
 
                 // =============================================================
                 // LOGIN
                 // =============================================================
-
                 _LoginPrompt(
-                  isDark:
-                      isDark,
+                  isDark: isDark,
 
-                  accent:
-                      primary,
+                  accent: primary,
 
-                  textColor:
-                      secondaryText,
+                  textColor: secondaryText,
 
-                  onPressed:
-                      isLoading
-                          ? null
-                          : _goToLogin,
+                  onPressed: isLoading ? null : _goToLogin,
                 ),
               ],
             ),
@@ -515,24 +349,16 @@ class _RegisterScreenState
   // EMAIL VALIDATOR
   // ===========================================================================
 
-  String? _validateEmail(
-    String? value,
-  ) {
-    final email =
-        value?.trim() ?? '';
+  String? _validateEmail(String? value) {
+    final email = value?.trim() ?? '';
 
     if (email.isEmpty) {
       return 'Ingresa tu correo electrónico';
     }
 
-    final emailRegex =
-        RegExp(
-      r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
-    );
+    final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
-    if (!emailRegex.hasMatch(
-      email,
-    )) {
+    if (!emailRegex.hasMatch(email)) {
       return 'Ingresa un correo válido';
     }
 
@@ -547,88 +373,44 @@ class _RegisterScreenState
 class _RegisterIcon extends StatelessWidget {
   final bool isDark;
 
-  const _RegisterIcon({
-    required this.isDark,
-  });
+  const _RegisterIcon({required this.isDark});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-    final accent =
-        isDark
-            ? const Color(
-                0xFF4DB6AC,
-              )
-            : const Color(
-                0xFF2E6F65,
-              );
+  Widget build(BuildContext context) {
+    final accent = isDark ? const Color(0xFF4DB6AC) : const Color(0xFF2E6F65);
 
     return Container(
       width: 84,
       height: 84,
 
-      decoration:
-          BoxDecoration(
-        shape:
-            BoxShape.circle,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
 
-        gradient:
-            LinearGradient(
-          begin:
-              Alignment.topLeft,
-          end:
-              Alignment.bottomRight,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
 
           colors: [
-            accent.withValues(
-              alpha:
-                  isDark
-                      ? .22
-                      : .15,
-            ),
+            accent.withValues(alpha: isDark ? .22 : .15),
 
-            accent.withValues(
-              alpha:
-                  .055,
-            ),
+            accent.withValues(alpha: .055),
           ],
         ),
 
-        border:
-            Border.all(
-          color:
-              accent.withValues(
-            alpha:
-                .24,
-          ),
-        ),
+        border: Border.all(color: accent.withValues(alpha: .24)),
 
         boxShadow: [
           BoxShadow(
-            color:
-                accent.withValues(
-              alpha:
-                  .14,
-            ),
+            color: accent.withValues(alpha: .14),
 
-            blurRadius:
-                30,
+            blurRadius: 30,
 
-            spreadRadius:
-                2,
+            spreadRadius: 2,
           ),
         ],
       ),
 
-      child:
-          Icon(
-        Icons.person_add_alt_1_rounded,
-        size:
-            38,
-        color:
-            accent,
-      ),
+      child: Icon(Icons.person_add_alt_1_rounded, size: 38, color: accent),
     );
   }
 }
@@ -637,115 +419,56 @@ class _RegisterIcon extends StatelessWidget {
 // SECTION TITLE
 // =============================================================================
 
-
 class _ErrorMessage extends StatelessWidget {
   final String message;
 
-  const _ErrorMessage({
-    super.key,
-    required this.message,
-  });
+  const _ErrorMessage({super.key, required this.message});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-    final isDark =
-        Theme.of(context).brightness ==
-        Brightness.dark;
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding:
-          const EdgeInsets.all(
-        13,
-      ),
+      padding: const EdgeInsets.all(13),
 
-      decoration:
-          BoxDecoration(
-        color:
-            (
-              isDark
-                  ? const Color(
-                      0xFFFF6B6B,
-                    )
-                  : const Color(
-                      0xFFB42318,
-                    )
-            ).withValues(
-              alpha:
-                  .08,
-            ),
+      decoration: BoxDecoration(
+        color: (isDark ? const Color(0xFFFF6B6B) : const Color(0xFFB42318))
+            .withValues(alpha: .08),
 
-        borderRadius:
-            BorderRadius.circular(
-          14,
-        ),
+        borderRadius: BorderRadius.circular(14),
 
-        border:
-            Border.all(
-          color:
-              (
-                isDark
-                    ? const Color(
-                        0xFFFF8A80,
-                      )
-                    : const Color(
-                        0xFFB42318,
-                      )
-              ).withValues(
-                alpha:
-                    .20,
-              ),
+        border: Border.all(
+          color: (isDark ? const Color(0xFFFF8A80) : const Color(0xFFB42318))
+              .withValues(alpha: .20),
         ),
       ),
 
-      child:
-          Row(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
           Icon(
             Icons.error_outline_rounded,
 
-            size:
-                20,
+            size: 20,
 
-            color:
-                isDark
-                    ? const Color(
-                        0xFFFF8A80,
-                      )
-                    : const Color(
-                        0xFFB42318,
-                      ),
+            color: isDark ? const Color(0xFFFF8A80) : const Color(0xFFB42318),
           ),
 
-          const SizedBox(
-            width: 10,
-          ),
+          const SizedBox(width: 10),
 
           Expanded(
-            child:
-                Text(
+            child: Text(
               message,
 
-              style:
-                  TextStyle(
-                color:
-                    isDark
-                        ? const Color(
-                            0xFFFFCBC7,
-                          )
-                        : const Color(
-                            0xFF8E1B12,
-                          ),
+              style: TextStyle(
+                color: isDark
+                    ? const Color(0xFFFFCBC7)
+                    : const Color(0xFF8E1B12),
 
-                fontSize:
-                    13,
+                fontSize: 13,
 
-                height:
-                    1.4,
+                height: 1.4,
               ),
             ),
           ),
@@ -776,66 +499,39 @@ class _LoginPrompt extends StatelessWidget {
   });
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment:
-          MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
 
       children: [
         Text(
           '¿Ya tienes una cuenta? ',
 
-          style:
-              TextStyle(
-            color:
-                textColor,
-
-            fontSize:
-                13.5,
-          ),
+          style: TextStyle(color: textColor, fontSize: 13.5),
         ),
 
         TextButton(
-          onPressed:
-              onPressed,
+          onPressed: onPressed,
 
-          style:
-              TextButton.styleFrom(
-            padding:
-                const EdgeInsets.symmetric(
-              horizontal:
-                  5,
-              vertical:
-                  2,
-            ),
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
 
-            minimumSize:
-                Size.zero,
+            minimumSize: Size.zero,
 
-            tapTargetSize:
-                MaterialTapTargetSize
-                    .shrinkWrap,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
 
-            foregroundColor:
-                accent,
+            foregroundColor: accent,
           ),
 
-          child:
-              Text(
+          child: Text(
             'Iniciar sesión',
 
-            style:
-                TextStyle(
-              color:
-                  accent,
+            style: TextStyle(
+              color: accent,
 
-              fontSize:
-                  13.5,
+              fontSize: 13.5,
 
-              fontWeight:
-                  FontWeight.w700,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),
@@ -843,4 +539,3 @@ class _LoginPrompt extends StatelessWidget {
     );
   }
 }
-
