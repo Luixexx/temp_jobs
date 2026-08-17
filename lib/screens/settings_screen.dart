@@ -16,23 +16,25 @@ class SettingsScreen extends StatelessWidget {
         children: [
           Text('Apariencia', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
-          RadioListTile<ThemeMode>(
-            title: const Text('Seguir el sistema'),
-            value: ThemeMode.system,
+          RadioGroup<ThemeMode>(
             groupValue: settings.themeMode,
             onChanged: (mode) => settings.setThemeMode(mode!),
-          ),
-          RadioListTile<ThemeMode>(
-            title: const Text('Claro'),
-            value: ThemeMode.light,
-            groupValue: settings.themeMode,
-            onChanged: (mode) => settings.setThemeMode(mode!),
-          ),
-          RadioListTile<ThemeMode>(
-            title: const Text('Oscuro'),
-            value: ThemeMode.dark,
-            groupValue: settings.themeMode,
-            onChanged: (mode) => settings.setThemeMode(mode!),
+            child: const Column(
+              children: [
+                RadioListTile<ThemeMode>(
+                  title: Text('Seguir el sistema'),
+                  value: ThemeMode.system,
+                ),
+                RadioListTile<ThemeMode>(
+                  title: Text('Claro'),
+                  value: ThemeMode.light,
+                ),
+                RadioListTile<ThemeMode>(
+                  title: Text('Oscuro'),
+                  value: ThemeMode.dark,
+                ),
+              ],
+            ),
           ),
           const Divider(height: 32),
           Text(

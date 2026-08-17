@@ -3,6 +3,7 @@ import 'offers_list_screen.dart';
 import 'my_hub_screen.dart';
 import 'forum_topics_screen.dart';
 import 'profile_screen.dart';
+import 'welcome_screen.dart';
 
 class MainNavScreen extends StatefulWidget {
   const MainNavScreen({super.key});
@@ -14,11 +15,12 @@ class MainNavScreen extends StatefulWidget {
 class _MainNavScreenState extends State<MainNavScreen> {
   int _currentIndex = 0;
 
-  final _screens = const [
-    OffersListScreen(),
-    MyHubScreen(),
-    ForumTopicsScreen(),
-    ProfileScreen(),
+  late final List<Widget> _screens = [
+    WelcomeScreen(onExploreOffers: () => setState(() => _currentIndex = 1)),
+    const OffersListScreen(),
+    const MyHubScreen(),
+    const ForumTopicsScreen(),
+    const ProfileScreen(),
   ];
 
   @override
@@ -32,6 +34,11 @@ class _MainNavScreenState extends State<MainNavScreen> {
         selectedIndex: _currentIndex,
         onDestinationSelected: (index) => setState(() => _currentIndex = index),
         destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: 'Inicio',
+          ),
           NavigationDestination(
             icon: Icon(Icons.work_outline),
             selectedIcon: Icon(Icons.work),

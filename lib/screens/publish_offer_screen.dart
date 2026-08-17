@@ -6,6 +6,8 @@ import '../services/catalog_service.dart';
 import '../services/offer_service.dart';
 import '../services/payment_service.dart';
 import '../services/upload_service.dart';
+import '../widget/location_picker.dart';
+import '../widget/questions_builder.dart';
 
 class PublishOfferScreen extends StatefulWidget {
   const PublishOfferScreen({super.key});
@@ -22,21 +24,22 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
   final _offerService = OfferService();
   final _picker = ImagePicker();
 
-  // Datos del catálogo
   List<JobType> _jobTypes = [];
   JobType? _selectedJobType;
   bool _loadingCatalog = true;
 
-  // Campos del formulario
   String _contractType = 'temporal';
   final _descriptionCtrl = TextEditingController();
   final _addressCtrl = TextEditingController();
   final Map<String, dynamic> _customAnswers = {};
 
-  // Foto
   File? _photoFile;
 
-  // Tarjeta (pago simulado)
+  DateTime? _deadline;
+  double? _selectedLat;
+  double? _selectedLng;
+  final List<OfferQuestionDraft> _questions = [];
+
   final _cardCtrl = TextEditingController(text: '4242424242424242');
   final _cvvCtrl = TextEditingController(text: '123');
   final _monthCtrl = TextEditingController(text: '12');
@@ -76,7 +79,6 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
     setState(() => _photoFile = File(picked.path));
   }
 
-  // Construye los widgets de los campos dinámicos según customFields
   List<Widget> _buildCustomFieldWidgets() {
     if (_selectedJobType == null) return [];
 
@@ -133,7 +135,7 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
                   : null,
             ),
           );
-        default: // 'text' o 'number'
+        default:
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: TextFormField(
@@ -169,11 +171,9 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
     });
 
     try {
-      // 1. Subir la foto
       setState(() => _statusMsg = 'Subiendo foto...');
       final photoUrl = await _uploadService.uploadImage(_photoFile!);
 
-      // 2. Procesar el pago
       setState(() => _statusMsg = 'Procesando pago...');
       final payment = await _paymentService.charge(
         cardNumber: _cardCtrl.text.trim(),
@@ -182,7 +182,6 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
         expYear: int.parse(_yearCtrl.text.trim()),
       );
 
-      // 3. Crear la oferta
       setState(() => _statusMsg = 'Publicando oferta...');
       await _offerService.createOffer({
         'jobTypeKey': _selectedJobType!.key,
@@ -193,15 +192,19 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
         'paymentId': payment.id,
         'payment': {'amount': 1500, 'currency': 'DOP'},
         if (_customAnswers.isNotEmpty) 'customAnswers': _customAnswers,
+        if (_deadline != null)
+          'deadline': _deadline!.toIso8601String().split('T').first,
+        if (_selectedLat != null && _selectedLng != null)
+          'location': {'lat': _selectedLat, 'lng': _selectedLng},
+        if (_questions.isNotEmpty)
+          'questions': _questions.map((q) => q.toJson()).toList(),
       });
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('¡Oferta publicada con éxito!')),
       );
-      Navigator.of(
-        context,
-      ).pop(true); // devuelve true para que la lista se refresque
+      Navigator.of(context).pop(true);
     } catch (e) {
       setState(() => _errorMsg = e.toString().replaceFirst('Exception: ', ''));
     } finally {
@@ -248,7 +251,7 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
                       decoration: const InputDecoration(
                         labelText: 'Tipo de contrato',
                       ),
-                      value: _contractType,
+                      initialValue: _contractType,
                       items: const [
                         DropdownMenuItem(
                           value: 'temporal',
@@ -282,6 +285,54 @@ class _PublishOfferScreenState extends State<PublishOfferScreen> {
                     ),
                     const SizedBox(height: 12),
                     ..._buildCustomFieldWidgets(),
+                    const SizedBox(height: 8),
+                    const Divider(),
+                    const Text(
+                      'Fecha límite para aplicar',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        _deadline == null
+                            ? 'Elegir fecha'
+                            : 'Límite: ${_deadline!.toIso8601String().split('T').first}',
+                      ),
+                      trailing: const Icon(Icons.event),
+                      onTap: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now().add(
+                            const Duration(days: 7),
+                          ),
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime.now().add(
+                            const Duration(days: 365),
+                          ),
+                        );
+                        if (picked != null) setState(() => _deadline = picked);
+                      },
+                    ),
+                    const Divider(),
+                    const Text(
+                      'Ubicación del trabajo',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    LocationPicker(
+                      onLocationSelected: (lat, lng) {
+                        _selectedLat = lat;
+                        _selectedLng = lng;
+                      },
+                    ),
+                    const Divider(),
+                    const Text(
+                      'Preguntas para los aplicantes (opcional)',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    QuestionsBuilder(questions: _questions, onChanged: () {}),
                     const SizedBox(height: 8),
                     const Divider(),
                     const Text(

@@ -4,8 +4,15 @@ import 'api_client.dart';
 class ApplicationService {
   final ApiClient _api = ApiClient();
 
-  Future<void> apply(String offerId, String comment) async {
-    await _api.post('/offers/$offerId/apply', {'comment': comment}, auth: true);
+  Future<void> apply(
+    String offerId,
+    String comment, {
+    List<Map<String, dynamic>>? answers,
+  }) async {
+    await _api.post('/offers/$offerId/apply', {
+      'comment': comment,
+      if (answers != null && answers.isNotEmpty) 'answers': answers,
+    }, auth: true);
   }
 
   Future<List<Application>> getMyApplications() async {
@@ -37,12 +44,12 @@ class ApplicationService {
     String? duration,
   }) async {
     final body = <String, dynamic>{
-      if (rating != null) 'rating': rating,
-      if (status != null) 'status': status,
-      if (salary != null) 'salary': salary,
-      if (currency != null) 'currency': currency,
-      if (startDate != null) 'startDate': startDate,
-      if (duration != null) 'duration': duration,
+      'rating': ?rating,
+      'status': ?status,
+      'salary': ?salary,
+      'currency': ?currency,
+      'startDate': ?startDate,
+      'duration': ?duration,
     };
     await _api.patch('/applications/$applicationId', body, auth: true);
   }

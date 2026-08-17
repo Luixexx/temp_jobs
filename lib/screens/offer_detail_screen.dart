@@ -45,44 +45,137 @@ class _OfferDetailScreenState extends State<OfferDetailScreen> {
     }
   }
 
-  Future<void> _showApplyDialog() async {
+  Future<void> _showApplyDialog(Offer offer) async {
     final commentCtrl = TextEditingController();
     final formKey = GlobalKey<FormState>();
+    final answers = <String, dynamic>{};
 
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Aplicar a esta oferta'),
-        content: Form(
-          key: formKey,
-          child: TextFormField(
-            controller: commentCtrl,
-            decoration: const InputDecoration(
-              labelText: '¿Por qué te consideras apto?',
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: const Text('Aplicar a esta oferta'),
+          content: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: commentCtrl,
+                    decoration: const InputDecoration(
+                      labelText: '¿Por qué te consideras apto?',
+                    ),
+                    maxLines: 3,
+                    validator: (v) =>
+                        (v == null || v.isEmpty) ? 'Requerido' : null,
+                  ),
+                  // Preguntas dinámicas definidas por quien publicó la oferta
+                  ...offer.questions.map((q) {
+                    switch (q.type) {
+                      case 'select':
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 12),
+                          child: DropdownButtonFormField<String>(
+                            decoration: InputDecoration(labelText: q.label),
+                            items: q.options
+                                .map(
+                                  (opt) => DropdownMenuItem(
+                                    value: opt,
+                                    child: Text(opt),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (value) =>
+                                setDialogState(() => answers[q.id] = value),
+                            validator: (value) => (q.required && value == null)
+                                ? 'Requerido'
+                                : null,
+                          ),
+                        );
+                      case 'check':
+                        return CheckboxListTile(
+                          title: Text(q.label),
+                          value: answers[q.id] ?? false,
+                          onChanged: (value) =>
+                              setDialogState(() => answers[q.id] = value),
+                        );
+                      case 'date':
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 12),
+                          child: TextFormField(
+                            decoration: InputDecoration(labelText: q.label),
+                            readOnly: true,
+                            controller: TextEditingController(
+                              text: answers[q.id] ?? '',
+                            ),
+                            onTap: () async {
+                              final picked = await showDatePicker(
+                                context: ctx,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2020),
+                                lastDate: DateTime(2100),
+                              );
+                              if (picked != null) {
+                                setDialogState(
+                                  () => answers[q.id] = picked
+                                      .toIso8601String()
+                                      .split('T')
+                                      .first,
+                                );
+                              }
+                            },
+                            validator: (value) =>
+                                (q.required && (value == null || value.isEmpty))
+                                ? 'Requerido'
+                                : null,
+                          ),
+                        );
+                      default: // text
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 12),
+                          child: TextFormField(
+                            decoration: InputDecoration(labelText: q.label),
+                            onChanged: (value) => answers[q.id] = value,
+                            validator: (value) =>
+                                (q.required && (value == null || value.isEmpty))
+                                ? 'Requerido'
+                                : null,
+                          ),
+                        );
+                    }
+                  }),
+                ],
+              ),
             ),
-            maxLines: 3,
-            validator: (v) => (v == null || v.isEmpty) ? 'Requerido' : null,
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (formKey.currentState!.validate()) Navigator.pop(ctx, true);
+              },
+              child: const Text('Enviar'),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (formKey.currentState!.validate()) Navigator.pop(ctx, true);
-            },
-            child: const Text('Enviar'),
-          ),
-        ],
       ),
     );
 
     if (confirmed != true) return;
 
     try {
-      await _applicationService.apply(widget.offerId, commentCtrl.text.trim());
+      final answersList = answers.entries
+          .map((e) => {'questionId': e.key, 'value': e.value})
+          .toList();
+      await _applicationService.apply(
+        widget.offerId,
+        commentCtrl.text.trim(),
+        answers: answersList,
+      );
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
@@ -168,7 +261,7 @@ class _OfferDetailScreenState extends State<OfferDetailScreen> {
                 ElevatedButton.icon(
                   icon: const Icon(Icons.send),
                   label: const Text('Aplicar a esta oferta'),
-                  onPressed: _showApplyDialog,
+                  onPressed: () => _showApplyDialog(offer),
                 ),
               ],
             ),

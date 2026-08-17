@@ -82,8 +82,9 @@ class _ContractDetailScreenState extends State<ContractDetailScreen> {
                       firstDate: DateTime.now(),
                       lastDate: DateTime(2100),
                     );
-                    if (picked != null)
+                    if (picked != null) {
                       setDialogState(() => startDate = picked);
+                    }
                   },
                 ),
               ],
