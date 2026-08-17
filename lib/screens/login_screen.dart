@@ -30,10 +30,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  // ===========================================================================
-  // LOGIN
-  // ===========================================================================
-
   Future<void> _submit() async {
     FocusScope.of(context).unfocus();
 
@@ -74,19 +70,11 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // ===========================================================================
-  // REGISTRO
-  // ===========================================================================
-
   void _goToRegister() {
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const RegisterScreen()));
   }
-
-  // ===========================================================================
-  // BUILD
-  // ===========================================================================
 
   @override
   Widget build(BuildContext context) {
@@ -131,9 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         const Spacer(),
 
-                        // =====================================================
-                        // LOGIN
-                        // =====================================================
+
                         Text(
                           'Login',
 
@@ -148,10 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
 
                         const SizedBox(height: 30),
-
-                        // =====================================================
-                        // CORREO
-                        // =====================================================
+         
                         AnimatedTextField(
                           controller: _emailCtrl,
 
@@ -170,9 +153,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         const SizedBox(height: 12),
 
-                        // =====================================================
-                        // CONTRASEÑA
-                        // =====================================================
                         AnimatedTextField(
                           controller: _passwordCtrl,
 
@@ -203,9 +183,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         const SizedBox(height: 16),
 
-                        // =====================================================
-                        // ERROR
-                        // =====================================================
                         AnimatedSwitcher(
                           duration: const Duration(milliseconds: 180),
 
@@ -252,9 +229,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                         ),
 
-                        // =====================================================
-                        // ENTRAR
-                        // =====================================================
                         AnimatedButton(
                           text: 'Iniciar Sesión',
 
@@ -267,9 +241,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         const Spacer(),
 
-                        // =====================================================
-                        // REGISTRARSE
-                        // =====================================================
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
 
@@ -326,10 +297,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
-  // ===========================================================================
-  // EMAIL VALIDATION
-  // ===========================================================================
 
   String? _validateEmail(String? value) {
     final email = value?.trim() ?? '';
